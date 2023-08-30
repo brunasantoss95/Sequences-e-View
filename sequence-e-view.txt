@@ -1,0 +1,107 @@
+1. Crie uma sequence seq_cargo. Insira 4 cargos utilizando a seq_cargo.
+2. Crie uma sequence seq_funcionario.
+	Faça uma procedure que insira funcionários.
+A coluna IdFuncionario deve ser preenchida usando a sequence.
+
+
+CREATE TABLE
+CARGO
+(idcargo INTEGER NOT NULL PRIMARY KEY,
+nomecargo VARCHAR(50),
+percAumento NUMBER(5,2));
+
+CREATE TABLE FUNCIONARIO
+   (idfuncionario NUMBER PRIMARY KEY NOT NULL,
+    nomefuncionario VARCHAR2(100),
+    salario NUMBER(17,2), flggerente CHAR(1),
+    idcargo NUMBER,
+         FOREIGN KEY (idcargo) REFERENCES CARGO (idcargo));
+
+CREATE TABLE LOGOPERACAO
+(idlogoperacao NUMBER PRIMARY KEY NOT NULL,
+ usuario VARCHAR2(30),
+ data DATE,
+ descricao VARCHAR2(1000));
+
+CREATE SEQUENCE SEQLOGOPERACAO START WITH 1 NOCACHE;
+
+INSERT INTO CARGO VALUES (1, 'GERENTE DE PROJETO', 15.75);
+INSERT INTO CARGO VALUES (2, 'ANALISTA DE SISTEMAS', 10.00);
+
+INSERT INTO FUNCIONARIO VALUES (1,'JOSÉ DAS COUVES',1500,'S', 1);
+INSERT INTO FUNCIONARIO VALUES (2,'ANTONIO FLORENÇO',3725.50,'N', 2);
+INSERT INTO FUNCIONARIO VALUES (3,'JUSTINA FEIJÓ',2725.50,'N', 2);
+INSERT INTO FUNCIONARIO VALUES (4,'MARIA ORACLINA',8500,'N', 2);
+
+--EXERCICIOS
+--1.Crie uma sequence seq_cargo. Insira 4 cargos utilizando a seq_cargo.
+create sequence seq_cargo
+increment by 10 -- aqui indica q vai ser incrementado de 2 em 2
+start with 10 -- aqui indica q vai começar do 10
+nocycle;
+
+insert into CARGO
+(idcargo, nomecargo, percAumento)
+values
+(seq_cargo.nextval, 'ENGENHEIRO DE DADOS', 22.00); --nextvalue chama o proximo valor da sequence
+insert into CARGO
+(idcargo, nomecargo, percAumento)
+values
+(seq_cargo.nextval, 'WEB DESIGN', 20.00); 
+insert into CARGO
+(idcargo, nomecargo, percAumento)
+values
+(seq_cargo.nextval, 'PROGRAMADOR JAVA SENIOR', 30.00); 
+insert into CARGO
+(idcargo, nomecargo, percAumento)
+values
+(seq_cargo.nextval, 'PROGRAMADOR JAVA PLENO', 22.00); 
+
+select * from cargo;
+
+--2.Crie uma sequence seq_funcionario. Faça uma procedure que insira funcionários.
+--A coluna IdFuncionario deve ser preenchida usando a sequence.
+create sequence seq_funcionario; --cria a sequence e poe suas definições
+increment by 1
+start with 1;
+
+create or replace procedure prc_func --faz a procedure e poe os parametros(terá OUT se ele trazer algum resultado na tela)
+(p_nomefuncionario in varchar, p_salario in number, p_idcargo in number) is
+begin
+
+insert into FUNCIONARIO 
+(idfuncionario, nomefuncionario, salario, flggerente, idcargo)
+values
+(seq_funcionario.nextval, p_nomefuncionario, p_salario, 'S', p_idcargo); --faço o insert com os parametros
+end;
+
+exec prc_func('Julia Silva', 2500, 410); --aqui coloco os inserts que quero colocar na tabela
+
+select*from funcionario;
+
+Exemplo 1:
+Create or replace View v_CidadeCliente as
+select cliente.nome, cidade.nomecidade
+from cliente, cidade
+where cliente.cod_cidade=cidade.cod_cidade;
+select * from v_CidadeCliente;
+
+Exemplo 2:
+Create or replace View v_Func as
+select cargo.nomeCargo, funcionario.nomefuncionario
+from cargo, funcionario
+where cargo.idcargo=funcionario.idcargo.
+
+→ Para executar:
+Select * from v_func;
+
+Exemplo 3:
+--exemplo 3: contar qnts funcs tem em cada cargo
+create or replace view v_conta_func as
+select CARGO.nomecargo,
+	count(1) contador -- qnd tiver count,avg,max... precisa de APELIDO, se ñ, não funciona
+from CARGO, FUNCIONARIO
+where CARGO.idcargo=FUNCIONARIO.idcargo
+group by CARGO.nomecargo;
+
+select * from v_conta_func;
